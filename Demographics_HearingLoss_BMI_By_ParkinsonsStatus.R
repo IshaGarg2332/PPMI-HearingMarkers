@@ -94,7 +94,8 @@ colnames(total)[which(names(total) == "RAHAWOPI")] <- "Hawaiian_Other_Pacific_Is
 colnames(total)[which(names(total) == "RAINDALS")] <- "American_Indian_Alaska_Native"
 colnames(total)[which(names(total) == "RANOS")] <- "Race_not_specified"
 
-#Rename column values
+#Rename column values in race (White, Asian, Black, Hawaiian/Other Pacific Islander, American Indian/Alaska Native, Race not specified, Unknown)
+#Some people selected "Race not specified" and others did not select an option
 total["RAASIAN"][total["RAASIAN"] == 0] <- NA
 total["RAASIAN"][total["RAASIAN"] == 1] <- "Asian"
 
@@ -116,7 +117,7 @@ total["RAWHITE"][total["RAWHITE"] == 1] <- "White"
 total["RAUNKNOWN"][total["RAUNKNOWN"] == 0] <- NA
 total["RAUNKNOWN"][total["RAUNKNOWN"] == 1] <- "Unknown"
 
-#Keep certain columns and remove NA values
+#Keep certain columns and remove NA values in race columns
 totalwhite <- total
 totalwhite <- totalwhite[c("PATNO","RAWHITE")]
 colnames(totalwhite)[which(names(totalwhite) == "RAWHITE")] <- "Race"
@@ -155,7 +156,7 @@ totalunknown <- na.omit(totalunknown)
 total1 <- total
 total1 <- total1[c("PATNO", "SEX", "COHORT_DEFINITION", "ENROLL_AGE")]
 
-#Combine all datasets
+#Combine all race datasets 
 combine <- merge(totalwhite, totalblack, by=c("PATNO", "Race"), all=T)
 combine1 <- merge(totalasian, combine, by=c("PATNO", "Race"), all=T)
 combine2 <- merge(totalhawaiian, combine1, by=c("PATNO", "Race"), all=T)
@@ -174,17 +175,18 @@ rm("combine", "combine1", "combine2", "combine3", "combine4", "combine5",
    "Demographics", "HeadInjury", "ParticipantStatus", "MedConditions", "PDDiagHistory",
    "HeadInjury", "tmp", "tmp2")
 
-#Rename column values
+#Rename column values (female and male)
 combine6["SEX"][combine6["SEX"] == 0] <- "Female"
 combine6["SEX"][combine6["SEX"] == 1] <- "Male"
 
 #Create 2 categories for age
+#Greater than 55 and less than 55
 combine7 <- combine6 %>%
   mutate(ENROLLAGE=case_when(
     ENROLL_AGE<55 ~ "<55",
     ENROLL_AGE>=55 ~ ">55"))
 
-#Sort the order of the rows for the table
+#Sort the order of the rows for the table (alphabetical order for race and <55 then >55 for age)
 combine7$ENROLLAGE = factor(combine7$ENROLLAGE, levels = c("<55",
                                                            ">55"), ordered = TRUE)
 
