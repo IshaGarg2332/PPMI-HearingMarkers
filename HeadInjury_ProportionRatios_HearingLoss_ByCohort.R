@@ -214,7 +214,7 @@ names(df)[names(df) == "X4"] <- "Parkinson"
 
 library(gt)
 
-#Create a table
+#Create a proportion table
 df %>%
   gt() %>%
   tab_header(
